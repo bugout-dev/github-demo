@@ -19,7 +19,7 @@ Users can also use a JSON representation of this metadata in their CI/CD environ
 
 Have a checklist of external actions that must be taken before a change can be deployed. This checklist can include things like running database migrations, setting environment variables, or modifying a load balancer.
 
-![Screenshot of check require](img/locust-example-1.png)
+![Screenshot of check require](img/ci-example-1.png)
 
 ## Installation
 
