@@ -9,7 +9,7 @@ Bugout is a knowledge management system for software teams.
 
 Our continious integration tools represented by:
 
-[**Locust summary**](https://github.com/bugout-dev/locust) - run static analysis in CI/CD environments and post summaries to pull requests. 
+**Locust** [summary generator](https://github.com/bugout-dev/locust) - run static analysis in CI/CD environments and post summaries to pull requests. 
 
 Users can also use a JSON representation of this metadata in their CI/CD environments to program checks like: "Every time we add a function, we should add a test in the corresponding testing module."
 
