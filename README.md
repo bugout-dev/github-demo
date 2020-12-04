@@ -29,7 +29,7 @@ For workflows, with a heavier downside for errors, human oversight is important.
 - Allow users to check off items from that list one by one
 - Refuse to progress to completion until all manual actions were complete
 
-## Build you Bugout environment!
+## Build your own Bugout environment!
 
 At first we setup check list CI tool and then we will add Locust code analyzer.
 
