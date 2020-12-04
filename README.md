@@ -7,7 +7,7 @@ Demos for Bugout GitHub integration.
 **Bugout** is a knowledge management system for software teams. 
 
 
-### Locust summaries
+## Locust summaries
 
 **Locust** is a [tool](https://github.com/bugout-dev/locust) which run static analysis in CI/CD environments and post summaries to pull requests. 
 
@@ -15,23 +15,43 @@ Demos for Bugout GitHub integration.
 
 Users can also use a JSON representation of this metadata in their CI/CD environments to program checks like: "Every time we add a function, we should add a test in the corresponding testing module."
 
-### CI/CD
+## CI/CD Build
 
 Have a checklist of external actions that must be taken before a change can be deployed. This checklist can include things like running database migrations, setting environment variables, or modifying a load balancer.
 
-![Screenshot of check require](img/ci-example-1.png)
+### Install Bugout GitHub Bot
 
-## Installation
+- Visit [Bugout GitHub Bot](https://github.com/apps/bugout-dev)
+- Install it to Organization or Private repositories
 
-Bugout GitHub integration requires 
+### Setup repository branch rules
 
-### Bugout GitHub Bot
+- Go to settings of current repository
+- Chose `Branches` and `Add rule` in section `Branch protection rules`
 
-Bugout CI requires [Bot](https://github.com/apps/bugout-dev) installation to repositories 
+![Branch protection rules](img/check-setup-1.png)
 
-### Bugout GitHub Actions
+- Add rule `Require status checks to pass before merging`
 
-Add file `locust.yaml` in `.github/workflow/` repository with following script:
+![Check branch rule](img/check-setup-2.png)
+
+**At this step you are be able to work with Bugout Checks**
+
+To be able to add Locust reports and run static analysis of code you need prepare Bugout accout and prepare repository.
+
+### Register at Bugout and generate token
+
+- Visit [Bugout](https://bugout.dev) website and create account
+- Generate new token 
+
+### Prepare Locust
+
+- Add GitHub `Secret` to Organization or exact Repository
+
+![Branch protection rules](img/secret-setup-1.png)
+
+- Add file `locust.yaml` in `.github/workflow/` repository
+- Be sure this file exists in `main` branch and your new Pull Requests branch out with it
 
 ```yaml
 name: Locust summary
@@ -85,6 +105,22 @@ jobs:
             -H "Authorization: Bearer $BUGOUT_SECRET" \
             --data '${{ steps.clean_summary.outputs.summary }}'
 ```
+
+
+
+
+
+- Create new Pull Request - [example](https://github.com/bugout-dev/github-demo/pull/2)
+
+
+
+
+
+![Screenshot of check require](img/ci-example-1.png)
+
+
+
+
 
 ### Generate token
 
