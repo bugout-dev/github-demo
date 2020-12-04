@@ -2,22 +2,30 @@
 
 Demos for Bugout GitHub integration.
 
+
 ## Bugout at GitHub
 
-**Bugout** is a knowledge management system for software teams. 
+Bugout is a knowledge management system for software teams. 
+Continious integration tools represented by:
 
-
-## Locust summaries
-
-**Locust** is a [tool](https://github.com/bugout-dev/locust) which run static analysis in CI/CD environments and post summaries to pull requests. 
+**Locust** summaries is a [tool](https://github.com/bugout-dev/locust) which run static analysis in CI/CD environments and post summaries to pull requests. 
 
 ![Screenshot of Locust summary](img/locust-example-1.png)
 
 Users can also use a JSON representation of this metadata in their CI/CD environments to program checks like: "Every time we add a function, we should add a test in the corresponding testing module."
 
-## CI/CD Build
+**CI/CD Checks** - a checklist of external actions that must be taken before a change can be deployed. This checklist can include things like running database migrations, setting environment variables, or modifying a load balancer.
 
-Have a checklist of external actions that must be taken before a change can be deployed. This checklist can include things like running database migrations, setting environment variables, or modifying a load balancer.
+![Screenshot of check require](img/ci-example-1.png)
+
+
+### Advantages of using Continuous Integration
+
+For workflows, with a heavier downside for errors, human oversight is important. Consider a service which, in addition to the behavior described above:
+- Provided users with a checklist of manual actions to complete
+- Allowed users to check off items from that list one by one
+- Refused to progress to completion until all manual actions were complete
+
 
 ### Install Bugout GitHub Bot
 
@@ -37,18 +45,36 @@ Have a checklist of external actions that must be taken before a change can be d
 
 **At this step you are be able to work with Bugout Checks**
 
+### Work with Bugout Checks!
+
+- To add new check, add comment to Pull Request:
+```
+@bugout-dev check require <your crucial check>
+```
+- To acept check:
+```
+@bugout-dev check accept <your crucial check>
+```
+- You can watch statuses of `reuired` and `accepted` checks at `Details` at our [example](https://github.com/bugout-dev/github-demo/pull/2) PR
+
+![Check Detail status](img/ci-example-2.png)
+
 To be able to add Locust reports and run static analysis of code you need prepare Bugout accout and prepare repository.
 
 ### Register at Bugout and generate token
 
 - Visit [Bugout](https://bugout.dev) website and create account
-- Generate new token 
+- Generate new token at [Bugout Tokens](https://alpha.bugout.dev/account)
+
+![Add new token](img/token-add-1.png)
+
+### Add token to GitHub Secrets
+
+- Add generated token to Organization `Secrets` and call it as `BUGOUT_SECRET`
+
+![Bugout secret at GitHub](img/secret-setup-1.png)
 
 ### Prepare Locust
-
-- Add GitHub `Secret` to Organization or exact Repository
-
-![Branch protection rules](img/secret-setup-1.png)
 
 - Add file `locust.yaml` in `.github/workflow/` repository
 - Be sure this file exists in `main` branch and your new Pull Requests branch out with it
@@ -106,26 +132,10 @@ jobs:
             --data '${{ steps.clean_summary.outputs.summary }}'
 ```
 
+### Generating your first Locust summary!
 
-
-
-
-- Create new Pull Request - [example](https://github.com/bugout-dev/github-demo/pull/2)
-
-
-
-
-
-![Screenshot of check require](img/ci-example-1.png)
-
-
-
-
-
-### Generate token
-
-Floow at [Bugout websire](https://alpha.bugout.dev/) and after registration you are be able to generate token
-
-### Setup BUGOUT_SECRET
-
-Add generated token to Organization `Secrets` and call it as `BUGOUT_SECRET`
+- Create new Pull Request, as [example](https://github.com/bugout-dev/github-demo/pull/2) PR
+- Type comment:
+```
+@bugout-dev summarize
+```
