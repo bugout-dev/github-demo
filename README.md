@@ -8,23 +8,24 @@ Demos for Bugout GitHub integration.
 Bugout is a knowledge management system for software teams. 
 Continious integration tools represented by:
 
-**Locust** summaries is a [tool](https://github.com/bugout-dev/locust) which run static analysis in CI/CD environments and post summaries to pull requests. 
+**Locust summary** is a [tool](https://github.com/bugout-dev/locust) which run static analysis in CI/CD environments and post summaries to pull requests. 
 
 ![Screenshot of Locust summary](img/locust-example-1.png)
 
 Users can also use a JSON representation of this metadata in their CI/CD environments to program checks like: "Every time we add a function, we should add a test in the corresponding testing module."
 
-**CI/CD Checks** - a checklist of external actions that must be taken before a change can be deployed. This checklist can include things like running database migrations, setting environment variables, or modifying a load balancer.
+**CI Checks** - a checklist of external actions that must be taken before a change can be deployed. This checklist can include things like running database migrations, setting environment variables, or modifying a load balancer.
 
 ![Screenshot of check require](img/ci-example-1.png)
 
 
-### Advantages of using Continuous Integration
+### Advantages and Key Features
 
-For workflows, with a heavier downside for errors, human oversight is important. Consider a service which, in addition to the behavior described above:
-- Provided users with a checklist of manual actions to complete
-- Allowed users to check off items from that list one by one
-- Refused to progress to completion until all manual actions were complete
+For workflows, with a heavier downside for errors, human oversight is important. Consider a service which:
+- Help developer to emits metadata describing AST-level changes to your code base between git revisions
+- Provide users with a checklist of manual actions to complete
+- Allow users to check off items from that list one by one
+- Refuse to progress to completion until all manual actions were complete
 
 
 ### Install Bugout GitHub Bot
@@ -57,6 +58,8 @@ For workflows, with a heavier downside for errors, human oversight is important.
 ```
 - You can watch statuses of `reuired` and `accepted` checks at `Details` at our [example](https://github.com/bugout-dev/github-demo/pull/2) PR
 
+> **Note:** You can put your phrase in qutes or without it
+
 ![Check Detail status](img/ci-example-2.png)
 
 To be able to add Locust reports and run static analysis of code you need prepare Bugout accout and prepare repository.
@@ -76,9 +79,10 @@ To be able to add Locust reports and run static analysis of code you need prepar
 
 ### Prepare Locust
 
-- Add file `locust.yaml` in `.github/workflow/` repository
+- Add file `locust.yaml` in `.github/workflow/` repository. Example of file lives [here](https://github.com/bugout-dev/github-demo/blob/main/.github/workflows/locust.yaml)
 - Be sure this file exists in `main` branch and your new Pull Requests branch out with it
 
+Core of file upload whole commit history with `actions/checkout@v2`
 ```yaml
 name: Locust summary
 
@@ -99,6 +103,11 @@ jobs:
         with:
           repository: ${{ steps.head_repo_name.outputs.repo }}
           fetch-depth: 0
+```
+
+Install python with `actions/setup-python@v2` and `bugout-locust` from PyPI
+
+```yaml
       - name: Install python
         uses: actions/setup-python@v2
         with:
@@ -107,6 +116,11 @@ jobs:
         run: |
           python -m pip install --upgrade pip setuptools
           pip install bugout-locust
+```
+
+At path according to environment variable `$GITHUB_EVENT_PATH` leaves GitHub Action JSON file with detailed information about current commit, repository and branch
+
+```yaml
       - name: Generate Locust summary
         run: |
           COMMENTS_URL=$(python -c 'import json; import os; event = os.environ.get("GITHUB_EVENT_PATH"); raw = open(event); inp_json = json.load(raw); print(inp_json.get("pull_request").get("_links").get("comments").get("href")); raw.close();')
@@ -122,6 +136,11 @@ jobs:
           summary="${summary//$'\n'/'%0A'}"
           summary="${summary//$'\r'/'%0D'}"
           echo "::set-output name=summary::$summary"
+```
+
+To be able to run static analysis and respond back with comment to Pull Request we store code metadata
+
+```yaml
       - name: Upload locust results to Bugout
         env:
           BUGOUT_SECRET: ${{ secrets.BUGOUT_SECRET }}
@@ -132,10 +151,25 @@ jobs:
             --data '${{ steps.clean_summary.outputs.summary }}'
 ```
 
-### Generating your first Locust summary!
+### Generate your first Locust summary!
 
-- Create new Pull Request, as [example](https://github.com/bugout-dev/github-demo/pull/2) PR
-- Type comment:
+- Create new Pull Request, please see our [example PR](https://github.com/bugout-dev/github-demo/pull/2)
+- Wait a bit until GitHub Action `Locust` completes
+- And just type a comment:
 ```
 @bugout-dev summarize
 ```
+
+## Resources & Links
+
+Bugout web site
+- https://bugout.dev
+
+Bugout GitHub Bot
+- https://github.com/apps/bugout-dev
+
+Bugout Locust package
+- https://github.com/bugout-dev/locust
+
+Locust `.yaml` file
+- https://github.com/bugout-dev/github-demo/blob/main/.github/workflows/locust.yaml
