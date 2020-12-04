@@ -64,9 +64,10 @@ jobs:
       - name: Generate Locust summary
         run: |
           COMMENTS_URL=$(python -c 'import json; import os; event = os.environ.get("GITHUB_EVENT_PATH"); raw = open(event); inp_json = json.load(raw); print(inp_json.get("pull_request").get("_links").get("comments").get("href")); raw.close();')
-          INITIAL_REF=$(python -c 'import json; import os; event = os.environ.get("GITHUB_EVENT_PATH"); raw = open(event); inp_json = json.load(raw); print(inp_json.get("pull_request").get("base").get("sha")); raw.close();')
-          TERMINAL_REF=$(python -c 'import json; import os; event = os.environ.get("GITHUB_EVENT_PATH"); raw = open(event); inp_json = json.load(raw); print(inp_json.get("pull_request").get("head").get("sha")); raw.close();')
-          locust --format json $INITIAL_REF $TERMINAL_REF --metadata "{\"comments_url\": \"${COMMENTS_URL}\", \"terminal_hash\": \"$TERMINAL_REF\"}" | tee summary
+          INITIAL_REF=$(locust.github initial)
+          TERMINAL_REF=$(locust.github terminal)
+          REPO_URL=$(locust.github repo)
+          locust --format json $INITIAL_REF $TERMINAL_REF --github $REPO_URL --metadata "{\"comments_url\": \"${COMMENTS_URL}\", \"terminal_hash\": \"$TERMINAL_REF\"}" | tee summary
       - name: Cleaning summary
         id: clean_summary
         run: |
