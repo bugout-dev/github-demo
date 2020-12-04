@@ -7,7 +7,7 @@ Demos for Bugout GitHub integration.
 
 Bugout is a knowledge management system for software teams. 
 
-Our continious integration tools represented by:
+Our continuous  integration tools represented by:
 
 **Locust** [summary generator](https://github.com/bugout-dev/locust) - run static analysis in CI/CD environments and post summaries to pull requests. 
 
@@ -31,7 +31,7 @@ For workflows, with a heavier downside for errors, human oversight is important.
 
 ## Build your own Bugout environment!
 
-At first we setup check list CI tool and then we will add Locust code analyzer.
+At first we set up a checklist CI tool and then we will add Locust code analyzer.
 
 ### Install Bugout GitHub Bot
 
@@ -57,17 +57,17 @@ At first we setup check list CI tool and then we will add Locust code analyzer.
 ```
 @bugout-dev check require <your crucial check>
 ```
-- To acept check:
+- To accept  check:
 ```
 @bugout-dev check accept <your crucial check>
 ```
-- You can watch statuses of `reuired` and `accepted` checks at `Details` at our [example](https://github.com/bugout-dev/github-demo/pull/2) PR
+- You can watch statuses of `required` and `accepted` checks at `Details` at our [example PR](https://github.com/bugout-dev/github-demo/pull/2)
 
-> **Note:** You can put your phrase in qutes or without it
+> **Note:** You can put your phrase in quotes or without it
 
 ![Check Detail status](img/ci-example-2.png)
 
-To be able to add Locust reports and run static analysis of code you need prepare Bugout accout and prepare repository.
+To be able to add Locust reports and run static analysis of code you need to prepare Bugout account and prepare a repository.
 
 ### Register at Bugout and generate token
 
@@ -167,7 +167,7 @@ To be able to run static analysis and respond back with comment to Pull Request 
 
 ## Resources & Links
 
-Bugout web site
+Bugout website
 - https://bugout.dev
 
 Bugout GitHub Bot
