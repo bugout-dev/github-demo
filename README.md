@@ -6,13 +6,15 @@ Demos for Bugout GitHub integration.
 ## Bugout at GitHub
 
 Bugout is a knowledge management system for software teams. 
-Continious integration tools represented by:
 
-**Locust summary** is a [tool](https://github.com/bugout-dev/locust) which run static analysis in CI/CD environments and post summaries to pull requests. 
+Our continious integration tools represented by:
+
+[**Locust summary**](https://github.com/bugout-dev/locust) - run static analysis in CI/CD environments and post summaries to pull requests. 
+
+Users can also use a JSON representation of this metadata in their CI/CD environments to program checks like: "Every time we add a function, we should add a test in the corresponding testing module."
 
 ![Screenshot of Locust summary](img/locust-example-1.png)
 
-Users can also use a JSON representation of this metadata in their CI/CD environments to program checks like: "Every time we add a function, we should add a test in the corresponding testing module."
 
 **CI Checks** - a checklist of external actions that must be taken before a change can be deployed. This checklist can include things like running database migrations, setting environment variables, or modifying a load balancer.
 
@@ -27,6 +29,9 @@ For workflows, with a heavier downside for errors, human oversight is important.
 - Allow users to check off items from that list one by one
 - Refuse to progress to completion until all manual actions were complete
 
+## Build you Bugout environment!
+
+At first we setup check list CI tool and then we will add Locust code analyzer.
 
 ### Install Bugout GitHub Bot
 
