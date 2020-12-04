@@ -223,6 +223,38 @@ def html_file_section_handler_github(item: Dict[str, Any]) -> Any:
     return file_details_element
 
 
+def generate_html_section_handler_github(
+    render_change: Callable[[Dict[str, Any], str, int, int], Optional[Any]]
+) -> Callable[[Any], Any]:
+    """
+    Generates a change wrapper, inside which contains a report on each
+    function or class depending on the compressed or full format.
+    """
+
+    def html_file_section_handler_github(item: Dict[str, Any]) -> Any:
+        filepath = item["file"]
+        file_url = item.get("file_url", filepath)
+        change_elements = [
+            render_change(change, filepath, 0, 2) for change in item["changes"]
+        ]
+        file_summary_element = E.A(filepath, href=file_url)
+        file_elements = [
+            E.B("Changes:"),
+            E.UL(*change_elements),
+        ]
+        file_elements_div = E.DIV(*file_elements)
+        file_details_element = E.DIV(
+            lxml.html.fromstring(
+                f"<details><summary>{lxml.html.tostring(file_summary_element).decode()}</summary>"
+                f"{lxml.html.tostring(file_elements_div).decode()}</details>"
+            )
+        )
+
+        return file_details_element
+
+    return html_file_section_handler_github
+
+
 def generate_render_html(
     file_section_handler: Callable[[Dict[str, Any]], Any]
 ) -> Callable[[Dict[str, Any]], str]:
@@ -311,7 +343,7 @@ renderers: Dict[str, Callable[[Dict[str, List[NestedChange]]], str]] = {
     "json": render_json,
     "yaml": render_yaml,
     "html": generate_render_html(html_file_section_handler_vanilla),
-    "html-github": generate_render_html(html_file_section_handler_github),
+    "html-github": generate_render_html(generate_html_section_handler_github(render_change_as_html))
 }
 
 
