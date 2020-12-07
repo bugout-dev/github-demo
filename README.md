@@ -13,7 +13,11 @@ Use Bugout to create a checklist of steps that must be taken before a change can
 
 ![Screenshot of check require](img/ci-example-1.png)
 
-Just mention `@bugout-dev` when you want to cross items off this checklist.
+Just mention `@bugout-dev` when you want to cross items off this checklist:
+
+```
+@bugout-dev check accept "Run alembic migration"
+```
 
 View the current status of your checklist on the `@bugout-dev` details page:
 
