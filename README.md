@@ -3,44 +3,38 @@
 Demos for Bugout GitHub integration.
 
 
-## Bugout at GitHub
+## Bugout on GitHub
 
-Bugout is a knowledge management system for software teams. 
+Bugout is a knowledge management system for software teams.
 
-Our continuous  integration tools represented by:
+### Add checklists to your pull requests
+Use Bugout to create a checklist of steps that must be taken before a change can be deployed. This checklist can include things like running database migrations, setting environment variables, or modifying a load balancer.
 
-**Locust** [summary generator](https://github.com/bugout-dev/locust) - run static analysis in CI/CD environments and post summaries to pull requests. 
+![Screenshot of check require](img/ci-example-1.png)
 
-Users can also use a JSON representation of this metadata in their CI/CD environments to program checks like: "Every time we add a function, we should add a test in the corresponding testing module."
+Just mention `@bugout-dev` when you want to cross items off this checklist.
+
+### Easier code reviews
+
+[**Locust**](https://github.com/bugout-dev/locust) is a static analyzer that summarizes pull requests.
+
+You can also use a JSON representation of Locust metadata in your CI/CD environments to program checks like: "Every time we add a function, we should add a test in the corresponding testing module."
 
 ![Screenshot of Locust summary](img/locust-example-1.png)
 
 
-**CI Checks** - a checklist of external actions that must be taken before a change can be deployed. This checklist can include things like running database migrations, setting environment variables, or modifying a load balancer.
+## Using Bugout
 
-![Screenshot of check require](img/ci-example-1.png)
-
-
-### Advantages and Key Features
-
-For workflows, with a heavier downside for errors, human oversight is important. Consider a service which:
-- Help developer to emits metadata describing AST-level changes to your code base between git revisions
-- Provide users with a checklist of manual actions to complete
-- Allow users to check off items from that list one by one
-- Refuse to progress to completion until all manual actions were complete
-
-## Build your own Bugout environment!
-
-At first we set up a checklist CI tool and then we will add Locust code analyzer.
-
-### Install Bugout GitHub Bot
+### Installation
 
 - Visit [Bugout GitHub Bot](https://github.com/apps/bugout-dev)
-- Install it to Organization or Private repositories
 
-### Setup repository branch rules
+- Install it in an organization or on individual repositories
+
+### Set up continuous integration
 
 - Go to settings of current repository
+
 - Chose `Branches` and `Add rule` in section `Branch protection rules`
 
 ![Branch protection rules](img/check-setup-1.png)
@@ -49,30 +43,33 @@ At first we set up a checklist CI tool and then we will add Locust code analyzer
 
 ![Check branch rule](img/check-setup-2.png)
 
-**At this step you are be able to work with Bugout Checks**
+**At this point, you have access to Bugout Checklists**
 
-### Work with Bugout Checks!
+### Work with Bugout Checklists!
 
-- To add new check, add comment to Pull Request:
+- To add a new check, create a comment on your Pull Request:
 ```
 @bugout-dev check require <your crucial check>
 ```
+
 - To accept  check:
 ```
 @bugout-dev check accept <your crucial check>
 ```
-- You can watch statuses of `required` and `accepted` checks at `Details` at our [example PR](https://github.com/bugout-dev/github-demo/pull/2)
+
+- View the details of the `@bugout-dev` job to see the status of your checklist. For our [example PR](https://github.com/bugout-dev/github-demo/pull/2):
 
 > **Note:** You can put your phrase in quotes or without it
 
 ![Check Detail status](img/ci-example-2.png)
 
-To be able to add Locust reports and run static analysis of code you need to prepare Bugout account and prepare a repository.
+To be unlock Locust summaries and run static analysis, you will need a Bugout account and will have to set up a GitHub Action.
 
 ### Register at Bugout and generate token
 
 - Visit [Bugout](https://bugout.dev) website and create account
-- Generate new token at [Bugout Tokens](https://alpha.bugout.dev/account)
+
+- Generate new token at [Bugout Tokens](https://bugout.dev/account)
 
 ![Add new token](img/token-add-1.png)
 
@@ -84,77 +81,8 @@ To be able to add Locust reports and run static analysis of code you need to pre
 
 ### Prepare Locust
 
-- Add file `locust.yaml` in `.github/workflow/` repository. Example of file lives [here](https://github.com/bugout-dev/github-demo/blob/main/.github/workflows/locust.yaml)
-- Be sure this file exists in `main` branch and your new Pull Requests branch out with it
-
-Core of file upload whole commit history with `actions/checkout@v2`
-```yaml
-name: Locust summary
-
-on: [ pull_request_target ]
-
-jobs:
-  build:
-    runs-on: ubuntu-20.04
-    steps:
-      - name: PR head repo
-        id: head_repo_name
-        run: |
-          HEAD_REPO_NAME=$(jq -r '.pull_request.head.repo.full_name' "$GITHUB_EVENT_PATH")
-          echo "PR head repo: $HEAD_REPO_NAME"
-          echo "::set-output name=repo::$HEAD_REPO_NAME"
-      - name: Checkout git repo
-        uses: actions/checkout@v2
-        with:
-          repository: ${{ steps.head_repo_name.outputs.repo }}
-          fetch-depth: 0
-```
-
-Install python with `actions/setup-python@v2` and `bugout-locust` from PyPI
-
-```yaml
-      - name: Install python
-        uses: actions/setup-python@v2
-        with:
-          python-version: '3.8'
-      - name: Install dependencies
-        run: |
-          python -m pip install --upgrade pip setuptools
-          pip install bugout-locust
-```
-
-At path according to environment variable `$GITHUB_EVENT_PATH` leaves GitHub Action JSON file with detailed information about current commit, repository and branch
-
-```yaml
-      - name: Generate Locust summary
-        run: |
-          COMMENTS_URL=$(python -c 'import json; import os; event = os.environ.get("GITHUB_EVENT_PATH"); raw = open(event); inp_json = json.load(raw); print(inp_json.get("pull_request").get("_links").get("comments").get("href")); raw.close();')
-          INITIAL_REF=$(locust.github initial)
-          TERMINAL_REF=$(locust.github terminal)
-          REPO_URL=$(locust.github repo)
-          locust --format json $INITIAL_REF $TERMINAL_REF --github $REPO_URL --metadata "{\"comments_url\": \"${COMMENTS_URL}\", \"terminal_hash\": \"$TERMINAL_REF\"}" | tee summary
-      - name: Cleaning summary
-        id: clean_summary
-        run: |
-          summary=$(cat summary)
-          summary="${summary//'%'/'%25'}"
-          summary="${summary//$'\n'/'%0A'}"
-          summary="${summary//$'\r'/'%0D'}"
-          echo "::set-output name=summary::$summary"
-```
-
-To be able to run static analysis and respond back with comment to Pull Request we store code metadata
-
-```yaml
-      - name: Upload locust results to Bugout
-        env:
-          BUGOUT_SECRET: ${{ secrets.BUGOUT_SECRET }}
-        run: |
-          curl -k -X POST "https://spire.bugout.dev/github/summary" \
-            -H "Content-Type: application/json" \
-            -H "Authorization: Bearer $BUGOUT_SECRET" \
-            --data '${{ steps.clean_summary.outputs.summary }}'
-```
+- Add file `locust.yaml` in `.github/workflow/` repository. Copy the template [here](https://github.com/bugout-dev/github-demo/blob/main/.github/workflows/locust.yaml)
+- Be sure this file exists in `main` or `master` branch and your new Pull Request branches include `.github/workflow/locust.yaml`.
 
 ### Generate your first Locust summary!
 
@@ -167,14 +95,11 @@ To be able to run static analysis and respond back with comment to Pull Request 
 
 ## Resources & Links
 
-Bugout website
-- https://bugout.dev
 
-Bugout GitHub Bot
-- https://github.com/apps/bugout-dev
+- [Bugout website](https://bugout.dev)
 
-Bugout Locust package
-- https://github.com/bugout-dev/locust
+- [Bugout GitHub Bot](https://github.com/apps/bugout-dev)
 
-Locust `.yaml` file
-- https://github.com/bugout-dev/github-demo/blob/main/.github/workflows/locust.yaml
+- [Bugout Locust package](https://github.com/bugout-dev/locust)
+
+- [`locust.yaml` starter](https://github.com/bugout-dev/github-demo/blob/main/.github/workflows/locust.yaml)
