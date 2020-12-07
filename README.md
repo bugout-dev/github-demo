@@ -8,11 +8,18 @@ Demos for Bugout GitHub integration.
 Bugout is a knowledge management system for software teams.
 
 ### Add checklists to your pull requests
+
 Use Bugout to create a checklist of steps that must be taken before a change can be deployed. This checklist can include things like running database migrations, setting environment variables, or modifying a load balancer.
 
 ![Screenshot of check require](img/ci-example-1.png)
 
 Just mention `@bugout-dev` when you want to cross items off this checklist.
+
+View the current status of your checklist on the `@bugout-dev` details page:
+
+![Check Detail status](img/ci-example-2.png)
+
+> TRY THIS on our [demo PR](https://github.com/bugout-dev/github-demo/pull/2)!
 
 ### Easier code reviews
 
@@ -57,11 +64,9 @@ You can also use a JSON representation of Locust metadata in your CI/CD environm
 @bugout-dev check accept <your crucial check>
 ```
 
-- View the details of the `@bugout-dev` job to see the status of your checklist. For our [example PR](https://github.com/bugout-dev/github-demo/pull/2):
+- View the details of the `@bugout-dev` job to see the status of your checklist.
 
 > **Note:** You can put your phrase in quotes or without it
-
-![Check Detail status](img/ci-example-2.png)
 
 To be unlock Locust summaries and run static analysis, you will need a Bugout account and will have to set up a GitHub Action.
 
