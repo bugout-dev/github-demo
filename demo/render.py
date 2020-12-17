@@ -374,6 +374,9 @@ def run(
 
 
 def main():
+    """
+    Make demo work!
+    """
     parser = argparse.ArgumentParser(description="Locust: rendering functionality")
     populate_argument_parser(parser)
     parser.add_argument(
