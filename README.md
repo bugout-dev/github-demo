@@ -13,6 +13,10 @@ Use Bugout to create a checklist of steps that must be taken before a change can
 
 ![Screenshot of check require](img/ci-example-1.png)
 
+Or use GitHub checkboxes `- [x] item1` to create interactive Check handlers
+
+![Screenshot of checkbox](img/checkbox-example-1.png)
+
 Just mention `@bugout-dev` when you want to cross items off this checklist:
 
 ```
